@@ -6,7 +6,7 @@ import { signIn } from "@/app/actions/auth";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; errore?: string }>;
 }) {
   const params = await searchParams;
 
@@ -27,6 +27,14 @@ export default async function LoginPage({
             Accedi all&apos;area allievi e maestri
           </p>
         </div>
+        {params.errore ? (
+          <div
+            className="mb-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+            role="alert"
+          >
+            {params.errore}
+          </div>
+        ) : null}
         <Card>
           <LoginForm action={signIn} nextPath={params.next} />
         </Card>
