@@ -7,6 +7,11 @@ import type { UserRole } from "@/lib/database.types";
 
 export type AuthState = { error?: string; success?: string };
 
+function parseSignupRole(raw: FormDataEntryValue | null): "allievo" | "maestro" {
+  const value = String(raw ?? "").trim();
+  return value === "maestro" ? "maestro" : "allievo";
+}
+
 export async function signIn(
   _prev: AuthState,
   formData: FormData,
@@ -49,6 +54,7 @@ export async function signUp(
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const fullName = String(formData.get("full_name") ?? "").trim();
+  const role = parseSignupRole(formData.get("role"));
 
   if (!email || !password || !fullName) {
     return { error: "Compila tutti i campi." };
@@ -62,7 +68,7 @@ export async function signUp(
     email,
     password,
     options: {
-      data: { full_name: fullName, role: "allievo" },
+      data: { full_name: fullName, role },
       emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/auth/callback`,
     },
   });
@@ -75,12 +81,12 @@ export async function signUp(
     await supabase.from("profiles").upsert({
       id: data.user.id,
       full_name: fullName,
-      role: "allievo",
+      role,
     });
   }
 
   if (data.session) {
-    redirect("/hub");
+    redirect(homeForRole(role));
   }
 
   return {

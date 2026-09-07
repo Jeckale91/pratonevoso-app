@@ -18,7 +18,7 @@ export default function RegistratiPage() {
           />
           <h1 className="text-2xl font-bold">Crea il tuo account</h1>
           <p className="mt-1 text-sm text-white/85">
-            Registrati come allievo della scuola
+            Registrati come allievo o maestro della scuola
           </p>
         </div>
         <Card>
